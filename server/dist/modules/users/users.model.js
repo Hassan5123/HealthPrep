@@ -14,7 +14,6 @@ const typeorm_1 = require("typeorm");
 const symptoms_model_1 = require("../symptoms/symptoms.model");
 const visits_model_1 = require("../visits/visits.model");
 const medications_model_1 = require("../medications/medications.model");
-const visit_prep_model_1 = require("../visit_prep/visit-prep.model");
 let User = class User {
     id;
     email;
@@ -30,7 +29,6 @@ let User = class User {
     symptoms;
     visits;
     medications;
-    visitPreps;
 };
 exports.User = User;
 __decorate([
@@ -48,10 +46,12 @@ __decorate([
 ], User.prototype, "password_hash", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 100 }),
+    (0, typeorm_1.Index)('idx_name', { synchronize: false }),
     __metadata("design:type", String)
 ], User.prototype, "first_name", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 100 }),
+    (0, typeorm_1.Index)('idx_name', { synchronize: false }),
     __metadata("design:type", String)
 ], User.prototype, "last_name", void 0);
 __decorate([
@@ -91,10 +91,6 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => medications_model_1.Medication, medication => medication.user),
     __metadata("design:type", Array)
 ], User.prototype, "medications", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => visit_prep_model_1.VisitPrep, visitPrep => visitPrep.user),
-    __metadata("design:type", Array)
-], User.prototype, "visitPreps", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users')
 ], User);

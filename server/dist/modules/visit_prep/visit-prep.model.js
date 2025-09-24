@@ -11,21 +11,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VisitPrep = void 0;
 const typeorm_1 = require("typeorm");
-const users_model_1 = require("../users/users.model");
 const visits_model_1 = require("../visits/visits.model");
 let VisitPrep = class VisitPrep {
     id;
-    user_id;
     visit_id;
-    questions_for_doctor;
+    questions_to_ask;
     symptoms_to_discuss;
-    medication_issues;
-    other_notes;
-    status;
+    conditions_to_discuss;
+    medications_to_discuss;
+    goals_for_visit;
+    prep_summary_notes;
     soft_deleted_at;
+    last_modified;
     created_at;
-    updated_at;
-    user;
     visit;
 };
 exports.VisitPrep = VisitPrep;
@@ -37,16 +35,11 @@ __decorate([
     (0, typeorm_1.Column)(),
     (0, typeorm_1.Index)(),
     __metadata("design:type", Number)
-], VisitPrep.prototype, "user_id", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    (0, typeorm_1.Index)(),
-    __metadata("design:type", Number)
 ], VisitPrep.prototype, "visit_id", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
-], VisitPrep.prototype, "questions_for_doctor", void 0);
+], VisitPrep.prototype, "questions_to_ask", void 0);
 __decorate([
     (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
@@ -54,40 +47,39 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
-], VisitPrep.prototype, "medication_issues", void 0);
+], VisitPrep.prototype, "conditions_to_discuss", void 0);
 __decorate([
     (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
-], VisitPrep.prototype, "other_notes", void 0);
+], VisitPrep.prototype, "medications_to_discuss", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'enum',
-        enum: ['draft', 'completed'],
-        default: 'draft'
-    }),
-    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
-], VisitPrep.prototype, "status", void 0);
+], VisitPrep.prototype, "goals_for_visit", void 0);
+__decorate([
+    (0, typeorm_1.Column)('text'),
+    __metadata("design:type", String)
+], VisitPrep.prototype, "prep_summary_notes", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     (0, typeorm_1.Index)(),
     __metadata("design:type", Object)
 ], VisitPrep.prototype, "soft_deleted_at", void 0);
 __decorate([
+    (0, typeorm_1.Column)({
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP',
+        onUpdate: 'CURRENT_TIMESTAMP'
+    }),
+    (0, typeorm_1.Index)(),
+    __metadata("design:type", Date)
+], VisitPrep.prototype, "last_modified", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], VisitPrep.prototype, "created_at", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
-    __metadata("design:type", Date)
-], VisitPrep.prototype, "updated_at", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => users_model_1.User, user => user.visitPreps, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
-    __metadata("design:type", users_model_1.User)
-], VisitPrep.prototype, "user", void 0);
-__decorate([
-    (0, typeorm_1.OneToOne)(() => visits_model_1.Visit, visit => visit.prep, { onDelete: 'SET NULL', nullable: true }),
+    (0, typeorm_1.OneToOne)(() => visits_model_1.Visit, visit => visit.prep, { onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'visit_id' }),
     __metadata("design:type", visits_model_1.Visit)
 ], VisitPrep.prototype, "visit", void 0);

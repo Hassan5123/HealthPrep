@@ -2,7 +2,6 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, Up
 import { Symptom } from '../symptoms/symptoms.model';
 import { Visit } from '../visits/visits.model';
 import { Medication } from '../medications/medications.model';
-import { VisitPrep } from '../visit_prep/visit-prep.model';
 
 @Entity('users')
 export class User {
@@ -17,9 +16,11 @@ export class User {
   password_hash: string;
 
   @Column({ length: 100 })
+  @Index('idx_name', { synchronize: false })
   first_name: string;
 
   @Column({ length: 100 })
+  @Index('idx_name', { synchronize: false })
   last_name: string;
 
   @Column({ type: 'date' })
@@ -50,7 +51,4 @@ export class User {
 
   @OneToMany(() => Medication, medication => medication.user)
   medications: Medication[];
-  
-  @OneToMany(() => VisitPrep, visitPrep => visitPrep.user)
-  visitPreps: VisitPrep[];
 }

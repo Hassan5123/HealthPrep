@@ -10,6 +10,7 @@ export class Medication {
 
   @Column()
   @Index()
+  @Index('idx_user_status', { synchronize: false })
   user_id: number;
 
   @Column({ nullable: true })
@@ -46,10 +47,12 @@ export class Medication {
     default: 'taking'
   })
   @Index()
+  @Index('idx_user_status', { synchronize: false })
   status: 'taking' | 'discontinued';
 
   @Column({ type: 'timestamp', nullable: true })
   @Index()
+  @Index('idx_user_status', { synchronize: false })
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()

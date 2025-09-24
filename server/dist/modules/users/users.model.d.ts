@@ -1,7 +1,6 @@
 import { Symptom } from '../symptoms/symptoms.model';
 import { Visit } from '../visits/visits.model';
 import { Medication } from '../medications/medications.model';
-import { VisitPrep } from '../visit_prep/visit-prep.model';
 export declare class User {
     id: number;
     email: string;
@@ -17,5 +16,4 @@ export declare class User {
     symptoms: Symptom[];
     visits: Visit[];
     medications: Medication[];
-    visitPreps: VisitPrep[];
 }

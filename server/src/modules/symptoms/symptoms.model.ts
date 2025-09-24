@@ -9,6 +9,7 @@ export class Symptom {
 
   @Column()
   @Index()
+  @Index('idx_user_status', { synchronize: false })
   user_id: number;
 
   @Column({ length: 200 })
@@ -49,10 +50,12 @@ export class Symptom {
     default: 'active'
   })
   @Index()
+  @Index('idx_user_status', { synchronize: false })
   status: 'active' | 'resolved' | 'monitoring';
 
   @Column({ type: 'timestamp', nullable: true })
   @Index()
+  @Index('idx_user_status', { synchronize: false })
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()

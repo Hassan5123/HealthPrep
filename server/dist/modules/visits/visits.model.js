@@ -41,6 +41,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_user_date', { synchronize: false }),
     __metadata("design:type", Number)
 ], Visit.prototype, "user_id", void 0);
 __decorate([
@@ -51,6 +52,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'date' }),
     (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_user_date', { synchronize: false }),
     __metadata("design:type", Date)
 ], Visit.prototype, "visit_date", void 0);
 __decorate([
@@ -73,6 +75,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_user_date', { synchronize: false }),
     __metadata("design:type", Object)
 ], Visit.prototype, "soft_deleted_at", void 0);
 __decorate([

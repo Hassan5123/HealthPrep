@@ -12,6 +12,7 @@ export class Visit {
 
   @Column()
   @Index()
+  @Index('idx_user_date', { synchronize: false })
   user_id: number;
 
   @Column()
@@ -20,6 +21,7 @@ export class Visit {
 
   @Column({ type: 'date' })
   @Index()
+  @Index('idx_user_date', { synchronize: false })
   visit_date: Date;
 
   @Column({ type: 'time' })
@@ -38,6 +40,7 @@ export class Visit {
 
   @Column({ type: 'timestamp', nullable: true })
   @Index()
+  @Index('idx_user_date', { synchronize: false })
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()

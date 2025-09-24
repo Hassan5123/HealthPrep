@@ -41,6 +41,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_user_status', { synchronize: false }),
     __metadata("design:type", Number)
 ], Medication.prototype, "user_id", void 0);
 __decorate([
@@ -86,11 +87,13 @@ __decorate([
         default: 'taking'
     }),
     (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_user_status', { synchronize: false }),
     __metadata("design:type", String)
 ], Medication.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     (0, typeorm_1.Index)(),
+    (0, typeorm_1.Index)('idx_user_status', { synchronize: false }),
     __metadata("design:type", Object)
 ], Medication.prototype, "soft_deleted_at", void 0);
 __decorate([
