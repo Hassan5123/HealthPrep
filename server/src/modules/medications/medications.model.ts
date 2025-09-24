@@ -6,7 +6,7 @@ export class Medication {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   user_id: number;
 
   @Column({ nullable: true })
@@ -15,16 +15,16 @@ export class Medication {
   @Column({ nullable: true })
   prescribed_during_visit_id: number;
 
-  @Column({ length: 200 })
+  @Column({ length: 200, nullable: false })
   medication_name: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   dosage: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   frequency: string;
 
-  @Column('text')
+  @Column('text', { nullable: false })
   conditions_or_symptoms: string;
 
   @Column({ type: 'date', nullable: true })

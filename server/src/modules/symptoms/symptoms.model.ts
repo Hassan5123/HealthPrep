@@ -7,16 +7,16 @@ export class Symptom {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   user_id: number;
 
-  @Column({ length: 200 })
+  @Column({ length: 200, nullable: false })
   symptom_name: string;
 
-  @Column()
+  @Column({ nullable: false })
   severity: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: false })
   onset_date: Date;
 
   @Column('text', { nullable: true })

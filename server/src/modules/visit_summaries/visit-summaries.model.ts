@@ -5,7 +5,7 @@ export class VisitSummary {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   visit_id: number;
 
   @Column('text', { nullable: true })
@@ -23,7 +23,7 @@ export class VisitSummary {
   @Column('text', { nullable: true })
   patient_concerns_not_addressed: string;
 
-  @Column('text')
+  @Column('text', { nullable: false })
   visit_summary_notes: string;
 
   @Column({ type: 'timestamp', nullable: true })

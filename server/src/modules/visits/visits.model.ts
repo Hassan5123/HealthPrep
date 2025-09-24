@@ -6,19 +6,19 @@ export class Visit {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   user_id: number;
 
-  @Column()
+  @Column({ nullable: false })
   provider_id: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: false })
   visit_date: Date;
 
-  @Column({ type: 'time' })
+  @Column({ type: 'time', nullable: false })
   visit_time: string;
 
-  @Column('text')
+  @Column('text', { nullable: false })
   visit_reason: string;
 
   @Column({

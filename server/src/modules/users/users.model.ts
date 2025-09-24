@@ -1,26 +1,23 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Symptom } from '../symptoms/symptoms.model';
-import { Visit } from '../visits/visits.model';
-import { Medication } from '../medications/medications.model';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255, unique: true })
+  @Column({ length: 255, unique: true, nullable: false })
   email: string;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, nullable: false })
   password_hash: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   first_name: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: false })
   last_name: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: false })
   date_of_birth: Date;
 
   @Column({ length: 20, nullable: true })
@@ -39,12 +36,12 @@ export class User {
   updated_at: Date;
 
   // Relationships
-  @OneToMany(() => Symptom, symptom => symptom.user)
-  symptoms: Symptom[];
+  @OneToMany('Symptom', 'user')
+  symptoms: any[];
 
-  @OneToMany(() => Visit, visit => visit.user)
-  visits: Visit[];
+  @OneToMany('Visit', 'user')
+  visits: any[];
 
-  @OneToMany(() => Medication, medication => medication.user)
-  medications: Medication[];
+  @OneToMany('Medication', 'user')
+  medications: any[];
 }

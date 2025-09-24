@@ -5,7 +5,7 @@ export class VisitPrep {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   visit_id: number;
 
   @Column('text', { nullable: true })
@@ -23,7 +23,7 @@ export class VisitPrep {
   @Column('text', { nullable: true })
   goals_for_visit: string;
 
-  @Column('text')
+  @Column('text', { nullable: false })
   prep_summary_notes: string;
 
   @Column({ type: 'timestamp', nullable: true })

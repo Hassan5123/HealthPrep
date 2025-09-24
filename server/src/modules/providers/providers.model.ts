@@ -5,13 +5,14 @@ export class Provider {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 200 })
+  @Column({ length: 200, nullable: false })
   provider_name: string;
 
   @Column({
     type: 'enum',
     enum: ['personal_doctor', 'walk_in_clinic', 'emergency_room', 'urgent_care', 'specialist'],
-    default: 'personal_doctor'
+    default: 'personal_doctor',
+    nullable: false
   })
   provider_type: 'personal_doctor' | 'walk_in_clinic' | 'emergency_room' | 'urgent_care' | 'specialist';
 
