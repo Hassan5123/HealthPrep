@@ -12,6 +12,8 @@ export class UserResponseDto {
   existing_conditions?: string | null;
   created_at: Date;
   updated_at: Date;
+  
+  // Explicitly omitting for security: password_hash, soft_deleted_at
 }
 
 /**

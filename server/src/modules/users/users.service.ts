@@ -36,7 +36,6 @@ export class UsersService {
     const salt = await bcrypt.genSalt();
     const password_hash = await bcrypt.hash(password, salt);
 
-    // Create new user
     const user = this.usersRepository.create({
       email,
       password_hash,
@@ -45,6 +44,7 @@ export class UsersService {
       date_of_birth: new Date(userData.date_of_birth),
       phone: userData.phone,
       existing_conditions: userData.existing_conditions,
+      soft_deleted_at: null
     });
 
     // Save user to database
@@ -77,7 +77,7 @@ export class UsersService {
     }
 
     // Check if user is soft deleted
-    if (user.soft_deleted_at) {
+    if (user.soft_deleted_at !== null) {
       throw new UnauthorizedException('This account has been deactivated');
     }
 
