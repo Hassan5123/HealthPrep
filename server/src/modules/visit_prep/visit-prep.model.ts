@@ -1,5 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
-import { User } from '../users/users.model';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn, Index } from 'typeorm';
 import { Visit } from '../visits/visits.model';
 
 @Entity('visit_prep')
@@ -9,48 +8,43 @@ export class VisitPrep {
 
   @Column()
   @Index()
-  user_id: number;
-
-  @Column({ nullable: true })
-  @Index()
   visit_id: number;
 
-  @Column('text')
-  questions_for_doctor: string;
+  @Column('text', { nullable: true })
+  questions_to_ask: string;
 
   @Column('text', { nullable: true })
   symptoms_to_discuss: string;
 
   @Column('text', { nullable: true })
-  medication_issues: string;
+  conditions_to_discuss: string;
 
   @Column('text', { nullable: true })
-  other_notes: string;
+  medications_to_discuss: string;
 
-  @Column({
-    type: 'enum',
-    enum: ['draft', 'completed'],
-    default: 'draft'
-  })
-  @Index()
-  status: 'draft' | 'completed';
+  @Column('text', { nullable: true })
+  goals_for_visit: string;
+
+  @Column('text')
+  prep_summary_notes: string;
 
   @Column({ type: 'timestamp', nullable: true })
   @Index()
   soft_deleted_at: Date | null;
 
+  @Column({ 
+    type: 'timestamp', 
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP'
+  })
+  @Index()
+  last_modified: Date;
+
   @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
-
   // Relationships
-  @ManyToOne(() => User, user => user.visitPreps, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
-
-  @OneToOne(() => Visit, visit => visit.prep, { onDelete: 'SET NULL', nullable: true })
+  @OneToOne(() => Visit, visit => visit.prep, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'visit_id' })
   visit: Visit;
 }

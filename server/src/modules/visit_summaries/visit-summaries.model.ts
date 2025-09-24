@@ -10,31 +10,33 @@ export class VisitSummary {
   @Index()
   visit_id: number;
 
+  @Column('text', { nullable: true })
+  new_diagnosis: string;
+
+  @Column('text', { nullable: true })
+  follow_up_instructions: string;
+
+  @Column('text', { nullable: true })
+  doctor_recommendations: string;
+
+  @Column('text', { nullable: true })
+  patient_concerns_addressed: string;
+
+  @Column('text', { nullable: true })
+  patient_concerns_not_addressed: string;
+
   @Column('text')
-  diagnoses: string;
-
-  @Column('text', { nullable: true })
-  treatment_plan: string;
-
-  @Column('text', { nullable: true })
-  prescriptions_info: string;
-
-  @Column('text', { nullable: true })
-  followup_instructions: string;
-
-  @Column('text', { nullable: true })
-  doctor_notes: string;
+  visit_summary_notes: string;
 
   @Column({ type: 'timestamp', nullable: true })
   @Index()
   soft_deleted_at: Date | null;
 
-  @Column({ type: 'timestamp', nullable: true })
-  @Index()
-  last_modified: Date;
-
   @CreateDateColumn()
   created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 
   // Relationships
   @OneToOne(() => Visit, visit => visit.summary, { onDelete: 'CASCADE' })
