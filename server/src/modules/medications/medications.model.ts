@@ -1,7 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../users/users.model';
-import { Provider } from '../providers/providers.model';
-import { Visit } from '../visits/visits.model';
 
 @Entity('medications')
 export class Medication {
@@ -9,20 +7,15 @@ export class Medication {
   id: number;
 
   @Column()
-  @Index()
-  @Index('idx_user_status', { synchronize: false })
   user_id: number;
 
   @Column({ nullable: true })
-  @Index()
   prescribing_provider_id: number;
 
   @Column({ nullable: true })
-  @Index()
   prescribed_during_visit_id: number;
 
   @Column({ length: 200 })
-  @Index()
   medication_name: string;
 
   @Column({ length: 100 })
@@ -35,7 +28,6 @@ export class Medication {
   conditions_or_symptoms: string;
 
   @Column({ type: 'date', nullable: true })
-  @Index()
   prescribed_date: Date;
 
   @Column('text', { nullable: true })
@@ -46,13 +38,9 @@ export class Medication {
     enum: ['taking', 'discontinued'],
     default: 'taking'
   })
-  @Index()
-  @Index('idx_user_status', { synchronize: false })
   status: 'taking' | 'discontinued';
 
   @Column({ type: 'timestamp', nullable: true })
-  @Index()
-  @Index('idx_user_status', { synchronize: false })
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()
@@ -65,11 +53,11 @@ export class Medication {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Provider, provider => provider.medications, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne('Provider', 'medications', { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'prescribing_provider_id' })
-  prescribing_provider: Provider;
+  prescribing_provider: any;
 
-  @ManyToOne(() => Visit, visit => visit.medications, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne('Visit', 'medications', { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'prescribed_during_visit_id' })
-  prescribed_during_visit: Visit;
+  prescribed_during_visit: any;
 }

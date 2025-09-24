@@ -1,13 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
-import { Visit } from '../visits/visits.model';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 @Entity('visit_summaries')
 export class VisitSummary {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  @Index()
+  @Column({ unique: true })
   visit_id: number;
 
   @Column('text', { nullable: true })
@@ -29,7 +27,6 @@ export class VisitSummary {
   visit_summary_notes: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  @Index()
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()
@@ -39,7 +36,7 @@ export class VisitSummary {
   updated_at: Date;
 
   // Relationships
-  @OneToOne(() => Visit, visit => visit.summary, { onDelete: 'CASCADE' })
+  @OneToOne('Visit', 'summary', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'visit_id' })
-  visit: Visit;
+  visit: any;
 }

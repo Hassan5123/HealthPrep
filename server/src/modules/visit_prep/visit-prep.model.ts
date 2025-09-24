@@ -1,13 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn, Index } from 'typeorm';
-import { Visit } from '../visits/visits.model';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 
 @Entity('visit_prep')
 export class VisitPrep {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  @Index()
+  @Column({ unique: true })
   visit_id: number;
 
   @Column('text', { nullable: true })
@@ -29,7 +27,6 @@ export class VisitPrep {
   prep_summary_notes: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  @Index()
   soft_deleted_at: Date | null;
 
   @Column({ 
@@ -37,14 +34,13 @@ export class VisitPrep {
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP'
   })
-  @Index()
   last_modified: Date;
 
   @CreateDateColumn()
   created_at: Date;
 
   // Relationships
-  @OneToOne(() => Visit, visit => visit.prep, { onDelete: 'CASCADE' })
+  @OneToOne('Visit', 'prep', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'visit_id' })
-  visit: Visit;
+  visit: any;
 }

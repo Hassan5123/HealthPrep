@@ -25,9 +25,13 @@ import { UsersModule } from './modules/users/users.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.model{.ts,.js}'],
-        synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
+        synchronize: false, // Disable schema sync to prevent dropping indexes needed by FKs
         ssl: { rejectUnauthorized: false },
         logging: configService.get('DB_LOGGING') === 'true',
+        migrationsRun: false,
+        // Additional options to better handle existing schema
+        dropSchema: false,
+        keepConnectionAlive: true,
       }),
     }),
     

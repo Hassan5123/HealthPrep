@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index, Check } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Check } from 'typeorm';
 import { User } from '../users/users.model';
 
 @Entity('symptoms_or_side_effects')
@@ -8,19 +8,15 @@ export class Symptom {
   id: number;
 
   @Column()
-  @Index()
-  @Index('idx_user_status', { synchronize: false })
   user_id: number;
 
   @Column({ length: 200 })
-  @Index()
   symptom_name: string;
 
   @Column()
   severity: number;
 
   @Column({ type: 'date' })
-  @Index()
   onset_date: Date;
 
   @Column('text', { nullable: true })
@@ -49,13 +45,9 @@ export class Symptom {
     enum: ['active', 'resolved', 'monitoring'],
     default: 'active'
   })
-  @Index()
-  @Index('idx_user_status', { synchronize: false })
   status: 'active' | 'resolved' | 'monitoring';
 
   @Column({ type: 'timestamp', nullable: true })
-  @Index()
-  @Index('idx_user_status', { synchronize: false })
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()

@@ -1,6 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
-import { Visit } from '../visits/visits.model';
-import { Medication } from '../medications/medications.model';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('providers')
 export class Provider {
@@ -8,7 +6,6 @@ export class Provider {
   id: number;
 
   @Column({ length: 200 })
-  @Index()
   provider_name: string;
 
   @Column({
@@ -16,11 +13,9 @@ export class Provider {
     enum: ['personal_doctor', 'walk_in_clinic', 'emergency_room', 'urgent_care', 'specialist'],
     default: 'personal_doctor'
   })
-  @Index()
   provider_type: 'personal_doctor' | 'walk_in_clinic' | 'emergency_room' | 'urgent_care' | 'specialist';
 
   @Column({ length: 100, nullable: true })
-  @Index()
   specialty: string;
 
   @Column({ length: 20, nullable: true })
@@ -36,7 +31,6 @@ export class Provider {
   notes: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  @Index()
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()
@@ -46,9 +40,9 @@ export class Provider {
   updated_at: Date;
 
   // Relationships
-  @OneToMany(() => Visit, visit => visit.provider)
-  visits: Visit[];
+  @OneToMany('Visit', 'provider')
+  visits: any[];
 
-  @OneToMany(() => Medication, medication => medication.prescribing_provider)
-  medications: Medication[];
+  @OneToMany('Medication', 'prescribing_provider')
+  medications: any[];
 }
