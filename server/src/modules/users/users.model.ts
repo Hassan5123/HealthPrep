@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Symptom } from '../symptoms/symptoms.model';
 import { Visit } from '../visits/visits.model';
 import { Medication } from '../medications/medications.model';
@@ -9,18 +9,15 @@ export class User {
   id: number;
 
   @Column({ length: 255, unique: true })
-  @Index()
   email: string;
 
   @Column({ length: 255 })
   password_hash: string;
 
   @Column({ length: 100 })
-  @Index('idx_name', { synchronize: false })
   first_name: string;
 
   @Column({ length: 100 })
-  @Index('idx_name', { synchronize: false })
   last_name: string;
 
   @Column({ type: 'date' })
@@ -33,7 +30,6 @@ export class User {
   existing_conditions: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  @Index()
   soft_deleted_at: Date | null;
 
   @CreateDateColumn()

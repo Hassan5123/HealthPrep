@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import * as path from 'path';
 
+import { UsersModule } from './modules/users/users.module';
+
 @Module({
   imports: [
     // Load environment variables
@@ -22,12 +24,15 @@ import * as path from 'path';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: [__dirname + '/**/*.model{.ts,.js}'],
         synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
         ssl: { rejectUnauthorized: false },
         logging: configService.get('DB_LOGGING') === 'true',
       }),
     }),
+    
+    // Feature modules
+    UsersModule,
   ],
   controllers: [],
   providers: [],

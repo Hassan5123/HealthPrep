@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -9,6 +9,22 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   
   const port = configService.get<string>('PORT') || 5001;
+  
+  // Enable CORS for frontend communication
+  app.enableCors({
+    origin: true, // Allow all origins in development, restrict in production
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  });
+
+  // Apply validation pipe globally to all endpoints
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Strip properties not defined in DTOs
+      forbidNonWhitelisted: true, // Throw errors if non-whitelisted properties are present
+      transform: true, // Automatically transform payloads to DTO instances
+    }),
+  );
   
   // Register shutdown hooks for graceful termination
   app.enableShutdownHooks();
