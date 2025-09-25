@@ -7,17 +7,17 @@ import { INestApplication, ConflictException, UnauthorizedException } from '@nes
 import * as bcrypt from 'bcrypt';
 import * as path from 'path';
 
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
-import { User } from './users.model';
+import { UsersService } from '../users.service';
+import { UsersController } from '../users.controller';
+import { User } from '../users.model';
 // Import necessary models to fix entity metadata errors
-import { Symptom } from '../symptoms/symptoms.model';
-import { Visit } from '../visits/visits.model';
-import { Medication } from '../medications/medications.model';
-import { Provider } from '../providers/providers.model';
-import { VisitSummary } from '../visit_summaries/visit-summaries.model';
-import { VisitPrep } from '../visit_prep/visit-prep.model';
-import { RegisterDto, LoginDto } from './dto';
+import { Symptom } from '../../symptoms/symptoms.model';
+import { Visit } from '../../visits/visits.model';
+import { Medication } from '../../medications/medications.model';
+import { Provider } from '../../providers/providers.model';
+import { VisitSummary } from '../../visit-summaries/visit-summaries.model';
+import { VisitPrep } from '../../visit-prep/visit-prep.model';
+import { RegisterDto, LoginDto } from '../dto';
 
 /**
  * Integration test for UsersService

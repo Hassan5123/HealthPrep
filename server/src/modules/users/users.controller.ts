@@ -1,6 +1,7 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Put, Body, Param, HttpCode, HttpStatus, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from '../../common/middlewares/auth-middleware';
 import { UsersService } from './users.service';
-import { RegisterDto, LoginDto, AuthResponseDto } from './dto';
+import { RegisterDto, LoginDto, UpdateProfileDto, AuthResponseDto, UserResponseDto } from './dto';
 
 /**
  * Controller handling user-related endpoints
@@ -28,5 +29,40 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
     return await this.usersService.login(loginDto);
+  }
+
+  /**
+   * Endpoint for updating user profile
+   * Protected by JWT authentication
+   * @param req Request object containing authenticated user
+   * @param updateProfileDto User profile update data
+   * @returns Updated user data
+   */
+  @Put('profile')
+  @UseGuards(AuthGuard)
+  async updateProfile(
+    @Request() req,
+    @Body() updateProfileDto: UpdateProfileDto
+  ): Promise<UserResponseDto> {
+    // Extract user ID from JWT payload
+    const userId = req.user.sub;
+    return await this.usersService.updateProfile(userId, updateProfileDto);
+  }
+
+  /**
+   * Endpoint for deactivating user account (soft delete)
+   * Protected by JWT authentication
+   * @param req Request object containing authenticated user
+   * @returns Success message
+   */
+  @Post('deactivate')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async deactivateAccount(
+    @Request() req,
+  ): Promise<{ success: boolean; message: string }> {
+    // Extract user ID from JWT payload
+    const userId = req.user.sub;
+    return await this.usersService.deactivateAccount(userId);
   }
 }

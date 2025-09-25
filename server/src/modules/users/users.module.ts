@@ -25,6 +25,6 @@ import { User } from './users.model';
   ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService],
+  exports: [UsersService, JwtModule],
 })
 export class UsersModule {}

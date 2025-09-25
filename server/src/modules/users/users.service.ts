@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './users.model';
-import { RegisterDto, LoginDto, AuthResponseDto, UserResponseDto } from './dto';
+import { RegisterDto, LoginDto, UpdateProfileDto, AuthResponseDto, UserResponseDto } from './dto';
 
 /**
  * Service handling user-related operations
@@ -96,6 +96,77 @@ export class UsersService {
     return {
       user: userResponse as UserResponseDto,
       token
+    };
+  }
+
+  /**
+   * Updates a user's profile information
+   * @param userId The ID of the user to update
+   * @param updateProfileDto The user profile data to update
+   * @returns The updated user data
+   */
+  async updateProfile(userId: number, updateProfileDto: UpdateProfileDto): Promise<UserResponseDto> {
+    // Find the user by ID
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Check if user is soft deleted
+    if (user.soft_deleted_at !== null) {
+      throw new UnauthorizedException('This account has been deactivated');
+    }
+
+    // If user is changing email, check if new email already exists
+    if (updateProfileDto.email && updateProfileDto.email !== user.email) {
+      const existingUser = await this.usersRepository.findOne({ where: { email: updateProfileDto.email } });
+      if (existingUser) {
+        throw new ConflictException('Email is already in use');
+      }
+    }
+
+    // Update user properties
+    if (updateProfileDto.email) user.email = updateProfileDto.email;
+    if (updateProfileDto.first_name) user.first_name = updateProfileDto.first_name;
+    if (updateProfileDto.last_name) user.last_name = updateProfileDto.last_name;
+    if (updateProfileDto.date_of_birth) user.date_of_birth = new Date(updateProfileDto.date_of_birth);
+    if (updateProfileDto.phone !== undefined) user.phone = updateProfileDto.phone;
+    if (updateProfileDto.existing_conditions !== undefined) user.existing_conditions = updateProfileDto.existing_conditions;
+
+    // Save updated user
+    const updatedUser = await this.usersRepository.save(user);
+
+    // Format response (exclude sensitive fields)
+    const { password_hash, soft_deleted_at, ...userResponse } = updatedUser;
+    return userResponse as UserResponseDto;
+  }
+
+  /**
+   * Deactivates a user's account (soft delete)
+   * @param userId The ID of the user to deactivate
+   * @returns The deactivated user data
+   */
+  async deactivateAccount(userId: number): Promise<{ success: boolean, message: string }> {
+    // Find the user by ID
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Check if user is already soft deleted
+    if (user.soft_deleted_at !== null) {
+      return { success: false, message: 'Account is already deactivated' };
+    }
+
+    // Set soft delete timestamp
+    user.soft_deleted_at = new Date();
+
+    // Save updated user
+    await this.usersRepository.save(user);
+
+    return { 
+      success: true, 
+      message: 'Account deactivated successfully'
     };
   }
 }
