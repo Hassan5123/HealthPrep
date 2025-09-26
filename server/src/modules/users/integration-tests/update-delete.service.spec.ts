@@ -41,6 +41,9 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
   };
   let validToken: string;
   let expiredToken: string;
+  
+  // Create a unique identifier for this test run to ensure no conflicts
+  const testRunId = Date.now() + Math.random();
 
   // This will run before all tests - sets up the test environment
   beforeAll(async () => {
@@ -97,7 +100,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     jwtService = moduleFixture.get<JwtService>(JwtService);
     
     await app.init();
-    console.log('Test setup successful. Database connection established.');
+    // Test setup successful. Database connection established.
 
     // Create test users for our scenarios
     await setupTestUsers();
@@ -106,7 +109,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
   afterAll(async () => {
     if (app) {
       await app.close();
-      console.log('Test app closed successfully.');
+      // Test app closed successfully.
     }
   });
 
@@ -114,10 +117,10 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
    * Helper functions
    */
   async function setupTestUsers() {
-    console.log('Setting up test users for profile update and deactivation tests');
+    // Setting up test users for profile update and deactivation tests
     
     // Regular user for basic operations
-    const regularUser = await createTestUser('update-test@example.com', {
+    const regularUser = await createTestUser(`update-delete-test-${testRunId}@example.com`, {
       firstName: 'Update',
       lastName: 'Tester',
       dateOfBirth: new Date('1985-03-15'),
@@ -127,7 +130,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     testUserIds.regularUser = regularUser.id;
     
     // User specifically for update tests
-    const updateTestUser = await createTestUser('profile-update@example.com', {
+    const updateTestUser = await createTestUser(`update-delete-profile-${testRunId}@example.com`, {
       firstName: 'Profile',
       lastName: 'Update',
       dateOfBirth: new Date('1990-06-20')
@@ -135,18 +138,18 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     testUserIds.updateTestUser = updateTestUser.id;
 
     // User specifically for deactivation tests - create and then deactivate
-    const deactivateTestUser = await createTestUser('deactivate@example.com');
+    const deactivateTestUser = await createTestUser(`update-delete-deactivate-${testRunId}@example.com`);
     testUserIds.deactivateTestUser = deactivateTestUser.id;
     
     // Actually deactivate this user for the deactivation tests
     await usersService.deactivateAccount(deactivateTestUser.id);
     
     // User with an email we'll try to conflict with
-    const existingEmailUser = await createTestUser('existing-email@example.com');
+    const existingEmailUser = await createTestUser(`update-delete-existing-${testRunId}@example.com`);
     testUserIds.existingEmailUser = existingEmailUser.id;
     
     // User that is already deactivated
-    const alreadyDeactivatedUser = await createTestUser('already-deactivated@example.com', {
+    const alreadyDeactivatedUser = await createTestUser(`update-delete-already-deactivated-${testRunId}@example.com`, {
       softDeleted: true
     });
     testUserIds.alreadyDeactivatedUser = alreadyDeactivatedUser.id;
@@ -167,8 +170,8 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       { expiresIn: -3600 } // Negative seconds = expired token
     );
     
-    console.log('Test users created successfully with IDs:', testUserIds);
-    console.log('Valid token generated for testing:', validToken);
+    // Test users created successfully with IDs stored in testUserIds object
+    // Valid token generated for testing
   }
   
   async function createTestUser(email: string, options: { 
@@ -248,7 +251,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       expect(updatedUser?.phone).toBe(updateProfileDto.phone);
       expect(updatedUser?.existing_conditions).toBe(updateProfileDto.existing_conditions);
       
-      console.log('Updated user data:', response);
+      // Updated user data available in response variable
     });
     
     it('2. should successfully update email if not already in use', async () => {
@@ -272,7 +275,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     
     it('3. should throw ConflictException when updating to an email already in use', async () => {
       const updateProfileDto: UpdateProfileDto = {
-        email: 'existing-email@example.com' // This email is already used by another test user
+        email: `update-delete-existing-${testRunId}@example.com` // This email is already used by another test user
       };
       
       // Attempt to update to existing email
@@ -287,7 +290,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
 
     it('4. should allow partial updates (only updating some fields)', async () => {
       // Create a fresh user with known values for this specific test
-      const partialUser = await createTestUser('partial-update@example.com', {
+      const partialUser = await createTestUser(`update-delete-partial-${testRunId}@example.com`, {
         firstName: 'Original',
         lastName: 'Unchanged',
         phone: '123-456-7890',
@@ -476,7 +479,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
   describe('Account Deactivation Tests', () => {
     it('1. should successfully deactivate a user account', async () => {
       // Create a fresh user for this test to avoid conflicts
-      const freshUser = await createTestUser('deactivate-fresh@example.com');
+      const freshUser = await createTestUser(`update-delete-fresh-${testRunId}@example.com`);
 
       // Deactivate the account
       const result = await usersService.deactivateAccount(freshUser.id);
@@ -489,11 +492,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       expect(deactivatedUser).toBeDefined();
       expect(deactivatedUser?.soft_deleted_at).not.toBeNull();
       
-      console.log('Deactivated user:', {
-        id: deactivatedUser?.id,
-        email: deactivatedUser?.email,
-        soft_deleted_at: deactivatedUser?.soft_deleted_at
-      });
+      // Deactivated user data available in deactivatedUser variable
     });
     
     it('2. should not allow deactivating an already deactivated account', async () => {
@@ -518,7 +517,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     it('4. should require JWT authentication for account deactivation endpoint', async () => {
       
       // Create a fresh user for this test 
-      const freshUser = await createTestUser('auth-test-user@example.com');
+      const freshUser = await createTestUser(`update-delete-auth-test-${testRunId}@example.com`);
       testUserIds.regularUser = freshUser.id;
       
       // Test that we can deactivate directly via the service
@@ -532,7 +531,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     it('5. should prevent login after account deactivation', async () => {
       // Try to login with deactivated account
       await expect(usersService.login({
-        email: 'deactivate@example.com',
+        email: `update-delete-deactivate-${testRunId}@example.com`,
         password: 'Password123!'
       })).rejects.toThrow('This account has been deactivated');
     });
@@ -546,7 +545,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       
       // Verify all data is still present
       expect(deactivatedUser).toBeDefined();
-      expect(deactivatedUser?.email).toBe('deactivate@example.com');
+      expect(deactivatedUser?.email).toBe(`update-delete-deactivate-${testRunId}@example.com`);
       expect(deactivatedUser?.first_name).toBe('Test');
       expect(deactivatedUser?.last_name).toBe('User');
       expect(deactivatedUser?.soft_deleted_at).not.toBeNull();
@@ -560,7 +559,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     
     it('7. should verify second deactivation returns already deactivated message', async () => {
       // Create a fresh user for this test
-      const testUser = await createTestUser('multi-deactivate@example.com');
+      const testUser = await createTestUser(`update-delete-multi-deactivate-${testRunId}@example.com`);
       
       // First deactivation - will either return success or false depending on user state
       await usersService.deactivateAccount(testUser.id);
@@ -584,7 +583,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     
     it('8. should handle concurrent deactivation attempts gracefully', async () => {
       // Create a fresh user for this test
-      const testUser = await createTestUser('concurrent-deactivate@example.com');
+      const testUser = await createTestUser(`update-delete-concurrent-deactivate-${testRunId}@example.com`);
       
       // First deactivate the user to ensure we know the state
       await usersService.deactivateAccount(testUser.id);
@@ -624,10 +623,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
         ]
       });
       
-      console.log('Test users still in database:');
-      users.forEach(user => {
-        console.log(`- User ID: ${user.id}, Email: ${user.email}, Name: ${user.first_name} ${user.last_name}, Deactivated: ${user.soft_deleted_at !== null}`);
-      });
+      // Test users still in database - data available in users array
       
       // Verify users are still there - there should be at least 4
       expect(users.length).toBeGreaterThanOrEqual(4);
@@ -641,8 +637,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       expect(updateTestUser).toBeDefined();
       expect(updateTestUser!.first_name).toBe('Updated'); // From test 1
       
-      // Since we're using dynamic email generation, we can't test for a specific value
-      // Just make sure the email follows our pattern
+      // make sure the email follows pattern since we're using dynamic email generation
       expect(updateTestUser!.email).toMatch(/@example.com$/);
     });
   });

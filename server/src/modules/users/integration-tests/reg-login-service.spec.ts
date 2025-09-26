@@ -31,6 +31,9 @@ describe('UsersService Integration Tests', () => {
   let usersService: UsersService;
   let userRepository: Repository<User>;
   let jwtService: JwtService;
+  
+  // Create a unique identifier for this test run to ensure no conflicts
+  const testRunId = Date.now();
 
   // This will run before all tests - sets up the test environment
   beforeAll(async () => {
@@ -88,7 +91,7 @@ describe('UsersService Integration Tests', () => {
       userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
       jwtService = moduleFixture.get<JwtService>(JwtService);
 
-      console.log('Test setup successful. Database connection established.');
+      // Test setup successful. Database connection established.
     } catch (error) {
       console.error('Error during test setup:', error);
       throw error;
@@ -100,7 +103,7 @@ describe('UsersService Integration Tests', () => {
     
     if (app) {
       await app.close();
-      console.log('Test app closed successfully.');
+      // Test app closed successfully.
     }
   });
   
@@ -138,7 +141,7 @@ describe('UsersService Integration Tests', () => {
     it('1. should successfully register a new user with all fields', async () => {
       // Arrange
       const registerDto: RegisterDto = {
-        email: 'test1@example.com',
+        email: `reg-login-test1-${testRunId}@example.com`,
         password: 'SecurePassword123!',
         first_name: 'John',
         last_name: 'Doe',
@@ -149,7 +152,7 @@ describe('UsersService Integration Tests', () => {
 
       // Act
       const result = await usersService.register(registerDto);
-      console.log('Full registration result:', result);
+      // Full registration result available in result variable
 
       // Assert
       expect(result).toBeDefined();
@@ -171,7 +174,7 @@ describe('UsersService Integration Tests', () => {
     it('2. should successfully register a user with only required fields', async () => {
       // Arrange - only required fields provided
       const registerDto: RegisterDto = {
-        email: 'minimal@example.com',
+        email: `reg-login-minimal-${testRunId}@example.com`,
         password: 'SecurePassword123!',
         first_name: 'Minimal',
         last_name: 'User',
@@ -181,7 +184,7 @@ describe('UsersService Integration Tests', () => {
 
       // Act
       const result = await usersService.register(registerDto);
-      console.log('Minimal registration result:', result);
+      // Minimal registration result available in result variable
 
       // Assert
       expect(result).toBeDefined();
@@ -193,10 +196,10 @@ describe('UsersService Integration Tests', () => {
 
     it('3. should throw ConflictException when registering with an existing email', async () => {
       // Arrange - Create a user first
-      await createTestUser('existing@example.com');
+      await createTestUser(`reg-login-existing-${testRunId}@example.com`);
       
       const registerDto: RegisterDto = {
-        email: 'existing@example.com', // Using an email that already exists
+        email: `reg-login-existing-${testRunId}@example.com`, // Using an email that already exists
         password: 'SecurePassword123!',
         first_name: 'Duplicate',
         last_name: 'User',
@@ -211,7 +214,7 @@ describe('UsersService Integration Tests', () => {
     it('4. should create a valid JWT token that contains user information', async () => {
       // Arrange
       const registerDto: RegisterDto = {
-        email: 'jwt_test@example.com',
+        email: `reg-login-jwt-test-${testRunId}@example.com`,
         password: 'SecurePassword123!',
         first_name: 'JWT',
         last_name: 'Tester',
@@ -240,7 +243,7 @@ describe('UsersService Integration Tests', () => {
       // Arrange
       const plainPassword = 'VerySecurePassword456!';
       const registerDto: RegisterDto = {
-        email: 'password_test@example.com',
+        email: `reg-login-password-test-${testRunId}@example.com`,
         password: plainPassword,
         first_name: 'Password',
         last_name: 'Tester',
@@ -273,21 +276,21 @@ describe('UsersService Integration Tests', () => {
     // Set up the test users before all login tests
     beforeAll(async () => {
       // Create test users for login tests
-      console.log('Setting up test users for login tests');
-      await createTestUser('test@example.com');
-      await createTestUser('softdeleted@example.com', { softDeleted: true });
+      // Setting up test users for login tests
+      await createTestUser(`reg-login-user-${testRunId}@example.com`);
+      await createTestUser(`reg-login-softdeleted-${testRunId}@example.com`, { softDeleted: true });
     });
 
     it('1. should successfully login an existing user', async () => {
       // Arrange
       const loginDto: LoginDto = {
-        email: 'test@example.com',
+        email: `reg-login-user-${testRunId}@example.com`,
         password: 'Password123!', // This matches what we set in createTestUser
       };
 
       // Act
       const result = await usersService.login(loginDto);
-      console.log('Login result:', result);
+      // Login result available in result variable
 
       // Assert
       expect(result).toBeDefined();
@@ -301,7 +304,7 @@ describe('UsersService Integration Tests', () => {
     it('2. should throw UnauthorizedException when login with wrong password', async () => {
       // Arrange
       const loginDto: LoginDto = {
-        email: 'test@example.com',
+        email: `reg-login-user-${testRunId}@example.com`,
         password: 'WrongPassword123!',
       };
 
@@ -313,7 +316,7 @@ describe('UsersService Integration Tests', () => {
     it('3. should throw UnauthorizedException when login with non-existent email', async () => {
       // Arrange
       const loginDto: LoginDto = {
-        email: 'nonexistent@example.com',
+        email: `reg-login-nonexistent-${testRunId}@example.com`,
         password: 'Password123!',
       };
 
@@ -325,7 +328,7 @@ describe('UsersService Integration Tests', () => {
     it('4. should throw UnauthorizedException when login with soft-deleted account', async () => {
       // Arrange
       const loginDto: LoginDto = {
-        email: 'softdeleted@example.com',
+        email: `reg-login-softdeleted-${testRunId}@example.com`,
         password: 'Password123!',
       };
 
@@ -336,7 +339,7 @@ describe('UsersService Integration Tests', () => {
     it('5. should return a valid JWT token on successful login', async () => {
       // Arrange
       const loginDto: LoginDto = {
-        email: 'test@example.com',
+        email: `reg-login-user-${testRunId}@example.com`,
         password: 'Password123!',
       };
 
@@ -359,7 +362,7 @@ describe('UsersService Integration Tests', () => {
     it('6. should return the correct user data structure on successful login', async () => {
       // Arrange
       const loginDto: LoginDto = {
-        email: 'test@example.com',
+        email: `reg-login-user-${testRunId}@example.com`,
         password: 'Password123!',
       };
 
@@ -382,11 +385,11 @@ describe('UsersService Integration Tests', () => {
     
     it('7. should handle case-sensitive password validation correctly', async () => {
       // First create a new user with a specific password
-      await createTestUser('case-test@example.com');
+      await createTestUser(`reg-login-case-test-${testRunId}@example.com`);
       
       // Try with incorrect password case
       const loginDto: LoginDto = {
-        email: 'case-test@example.com',
+        email: `reg-login-case-test-${testRunId}@example.com`,
         password: 'password123!', // Lowercase 'p' instead of 'P'
       };
 
