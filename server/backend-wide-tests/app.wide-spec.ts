@@ -4,7 +4,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('AppController (backend-wide)', () => {
   let app: INestApplication<App>;
 
   beforeEach(async () => {

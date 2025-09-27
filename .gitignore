@@ -66,5 +66,3 @@ pnpm-lock.yaml
 .serverless/
 .eslintcache
 commands.md
-CI_SETUP.md
-ci_setup_prompt.md

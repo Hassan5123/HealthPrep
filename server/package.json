@@ -7,17 +7,17 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"e2e-tests/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"backend-wide-tests/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,e2e-tests}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,apps,libs,backend-wide-tests}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./e2e-tests/jest-e2e.json"
+    "test:wide": "jest --config ./backend-wide-tests/jest-wide.json"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.60.0",
