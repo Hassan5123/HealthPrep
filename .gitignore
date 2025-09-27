@@ -16,7 +16,7 @@ node_modules
 /build
 /dist
 /server/dist
-/.next
+.next
 /out
 .cache
 .vercel
