@@ -351,13 +351,15 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     });
     
     it('7. should update the updated_at timestamp', async () => {
-      const beforeUpdate = new Date();
+      // Get the current user and record the original timestamp
+      const originalUser = await userRepository.findOne({ where: { id: testUserIds.regularUser } });
+      const originalTimestamp = originalUser!.updated_at;
       
-      // Small delay to ensure timestamps will be different
-      await new Promise(resolve => setTimeout(resolve, 10));
+      // Wait to ensure timestamp difference would be noticeable
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       const updateProfileDto: UpdateProfileDto = {
-        existing_conditions: 'Updated condition for timestamp test',
+        existing_conditions: `Updated condition for timestamp test ${Date.now()}`,
       };
       
       // Make the update
@@ -365,9 +367,9 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       
       // Check the timestamp
       const updatedUser = await userRepository.findOne({ where: { id: testUserIds.regularUser } });
-      const updateTimestamp = new Date(updatedUser!.updated_at);
       
-      expect(updateTimestamp.getTime()).toBeGreaterThan(beforeUpdate.getTime());
+      // Compare as strings to avoid millisecond precision issues
+      expect(String(updatedUser!.updated_at)).not.toBe(String(originalTimestamp));
     });
     
     it('8. should not allow updating a deactivated account', async () => {
