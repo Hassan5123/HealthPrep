@@ -3,8 +3,21 @@
 import React, { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { apiRequest, ApiRequestError } from '../../utils/api';
+
+interface RegisterResponse {
+  user: {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+  };
+  token: string;
+}
 
 export default function Register() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -17,6 +30,8 @@ export default function Register() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -74,12 +89,36 @@ export default function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setApiError('');
     
     if (validateForm()) {
-      console.log('Registration data:', formData);
-      setSubmitted(true);
+      setIsLoading(true);
+      
+      try {
+        // Prepare data for backend (exclude confirmPassword)
+        const { confirmPassword, ...registerData } = formData;
+        
+        const response = await apiRequest<RegisterResponse>('/users/register', {
+          method: 'POST',
+          body: JSON.stringify(registerData),
+        });
+        
+        // Store token in localStorage
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        setSubmitted(true);
+      } catch (err) {
+        if (err instanceof ApiRequestError) {
+          setApiError(err.message);
+        } else {
+          setApiError('An unexpected error occurred. Please try again.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -100,12 +139,12 @@ export default function Register() {
             <p className="mt-2 text-slate-600">Your account has been created successfully.</p>
             
             <div className="mt-8">
-              <Link 
-                href="/login" 
+              <button
+                onClick={() => router.push('/dashboard')}
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
               >
-                Sign In
-              </Link>
+                Get Started
+              </button>
             </div>
           </div>
         </div>

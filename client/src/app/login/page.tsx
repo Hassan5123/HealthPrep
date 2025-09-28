@@ -3,29 +3,85 @@
 import React, { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { apiRequest, ApiRequestError } from '../../utils/api';
+
+interface LoginResponse {
+  user: {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+  };
+  token: string;
+}
 
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{email?: string, password?: string}>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = () => {
+    const errors: {email?: string, password?: string} = {};
+    let isValid = true;
+    
+    if (!email) {
+      errors.email = 'Email is required';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = 'Please enter a valid email address';
+      isValid = false;
+    }
+    
+    if (!password) {
+      errors.password = 'Password is required';
+      isValid = false;
+    }
+    
+    setFieldErrors(errors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
     
-    // Form validation
-    if (!email || !password) {
-      setError('Email and password are required');
+    if (!validateForm()) {
       return;
     }
     
-    console.log('Login attempted with:', { email, password });
+    setIsLoading(true);
+    
+    try {
+      const response = await apiRequest<LoginResponse>('/users/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      
+      // Store token in localStorage
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      // Redirect to dashboard or home page
+      router.push('/dashboard');
+    } catch (err) {
+      if (err instanceof ApiRequestError) {
+        setError(err.message);
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Navbar />
-      
       <div className="max-w-md mx-auto pt-20 pb-12 px-4 sm:px-6">
         <div className="bg-white shadow-xl rounded-2xl p-8">
           <div className="text-center mb-8">
@@ -49,8 +105,11 @@ export default function Login() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full px-4 py-3 rounded-lg border ${fieldErrors.email ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
               />
+              {fieldErrors.email && (
+                <p className="text-red-600 text-sm mt-1">{fieldErrors.email}</p>
+              )}
             </div>
             
             <div>
@@ -70,15 +129,19 @@ export default function Login() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full px-4 py-3 rounded-lg border ${fieldErrors.password ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
               />
+              {fieldErrors.password && (
+                <p className="text-red-600 text-sm mt-1">{fieldErrors.password}</p>
+              )}
             </div>
             
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
+              disabled={isLoading}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign in
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
           
