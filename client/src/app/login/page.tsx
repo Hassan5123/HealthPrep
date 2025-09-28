@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,14 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{email?: string, password?: string}>({});
+  
+  // Check if user is already logged in, redirect to dashboard if they are
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      router.push('/dashboard');
+    }
+  }, [router]);
 
   const validateForm = () => {
     const errors: {email?: string, password?: string} = {};
@@ -66,7 +74,10 @@ export default function Login() {
       localStorage.setItem('authToken', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       
-      // Redirect to dashboard or home page
+      // Trigger storage event manually to notify components about auth state change
+      window.dispatchEvent(new Event('storage'));
+      
+      // Redirect to dashboard
       router.push('/dashboard');
     } catch (err) {
       if (err instanceof ApiRequestError) {
@@ -105,7 +116,7 @@ export default function Login() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg border ${fieldErrors.email ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${fieldErrors.email ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
               />
               {fieldErrors.email && (
                 <p className="text-red-600 text-sm mt-1">{fieldErrors.email}</p>
@@ -129,7 +140,7 @@ export default function Login() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg border ${fieldErrors.password ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${fieldErrors.password ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
               />
               {fieldErrors.password && (
                 <p className="text-red-600 text-sm mt-1">{fieldErrors.password}</p>

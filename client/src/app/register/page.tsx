@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,6 +18,15 @@ interface RegisterResponse {
 
 export default function Register() {
   const router = useRouter();
+  
+  // Check if user is already logged in, redirect to dashboard if they are
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      router.push('/dashboard');
+    }
+  }, [router]);
+  
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -109,7 +118,11 @@ export default function Register() {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         
-        setSubmitted(true);
+        // Trigger storage event manually to notify components about auth state change
+        window.dispatchEvent(new Event('storage'));
+        
+        // Redirect to dashboard directly
+        router.push('/dashboard');
       } catch (err) {
         if (err instanceof ApiRequestError) {
           setApiError(err.message);
@@ -178,7 +191,7 @@ export default function Register() {
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${errors.first_name ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${errors.first_name ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                   required
                 />
                 {errors.first_name && (
@@ -197,7 +210,7 @@ export default function Register() {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${errors.last_name ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${errors.last_name ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                   required
                 />
                 {errors.last_name && (
@@ -216,7 +229,7 @@ export default function Register() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${errors.email ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                   required
                 />
                 {errors.email && (
@@ -235,7 +248,7 @@ export default function Register() {
                   name="date_of_birth"
                   value={formData.date_of_birth}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${errors.date_of_birth ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${errors.date_of_birth ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                   required
                 />
                 {errors.date_of_birth && (
@@ -254,7 +267,7 @@ export default function Register() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${errors.phone ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                 />
                 {errors.phone && (
                   <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
@@ -272,7 +285,7 @@ export default function Register() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${errors.password ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                   required
                 />
                 {errors.password && (
@@ -291,7 +304,7 @@ export default function Register() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  className={`w-full px-4 py-3 rounded-lg border text-slate-900 ${errors.confirmPassword ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
                   required
                 />
                 {errors.confirmPassword && (
@@ -311,7 +324,7 @@ export default function Register() {
                 value={formData.existing_conditions}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             
