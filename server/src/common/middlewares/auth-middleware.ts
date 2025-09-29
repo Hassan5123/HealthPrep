@@ -1,9 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
 /**
- * Validates JWT tokens and ensures users can only access their own resources
+ * Validates JWT tokens and attaches user information to the request
+ * Authorization logic is handled at the service layer, not in this middleware
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,22 +22,14 @@ export class AuthGuard implements CanActivate {
     try {
       // Verify token and store user payload
       const payload = await this.jwtService.verifyAsync(token);
+      
+      // Attach the user info to the request object
       request['user'] = payload;
       
-      // Ensure user is accessing own resources
-      // Get requested user ID from params or body
-      const requestedUserId = request.params.id || request.body.user_id;
-      
-      // If a specific user is being targeted, verify it matches authenticated user
-      if (requestedUserId && payload.sub !== parseInt(requestedUserId)) {
-        throw new ForbiddenException('You can only access your own resources');
-      }
-      
+      // Return true to allow the request to proceed
       return true;
     } catch (error) {
-      if (error instanceof ForbiddenException) {
-        throw error; // Re-throw authorization errors
-      }
+      // Any JWT verification error results in unauthorized exception
       throw new UnauthorizedException('Invalid or expired token');
     }
   }
