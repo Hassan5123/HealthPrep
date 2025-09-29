@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import * as path from 'path';
 
 import { UsersModule } from './modules/users/users.module';
+import { ProvidersModule } from './modules/providers/providers.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { UsersModule } from './modules/users/users.module';
     
     // Feature modules
     UsersModule,
+    ProvidersModule,
   ],
   controllers: [],
   providers: [],
