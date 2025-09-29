@@ -10,16 +10,16 @@ export class Provider {
 
   @Column({
     type: 'enum',
-    enum: ['personal_doctor', 'walk_in_clinic', 'emergency_room', 'urgent_care', 'specialist'],
+    enum: ['personal_doctor', 'walk_in_clinic', 'emergency_room'],
     default: 'personal_doctor',
     nullable: false
   })
-  provider_type: 'personal_doctor' | 'walk_in_clinic' | 'emergency_room' | 'urgent_care' | 'specialist';
+  provider_type: 'personal_doctor' | 'walk_in_clinic' | 'emergency_room';
 
   @Column({ length: 100, nullable: true })
   specialty: string;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ length: 20, nullable: false })
   phone: string;
 
   @Column({ length: 255, nullable: true })
