@@ -1,7 +1,7 @@
-import { Controller, Post, Put, Body, Param, HttpCode, HttpStatus, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Put, Get, Body, Param, HttpCode, HttpStatus, UseGuards, Request } from '@nestjs/common';
 import { AuthGuard } from '../../common/middlewares/auth-middleware';
 import { UsersService } from './users.service';
-import { RegisterDto, LoginDto, UpdateProfileDto, AuthResponseDto, UserResponseDto } from './dto';
+import { RegisterDto, LoginDto, UpdateProfileDto, AuthResponseDto, UserResponseDto, GetProfileResponseDto } from './dto';
 
 /**
  * Controller handling user-related endpoints
@@ -29,6 +29,20 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
     return await this.usersService.login(loginDto);
+  }
+
+  /**
+   * Endpoint for getting user profile
+   * Protected by JWT authentication
+   * @param req Request object containing authenticated user
+   * @returns User profile data (email, first_name, last_name, date_of_birth, phone, existing_conditions)
+   */
+  @Get('profile')
+  @UseGuards(AuthGuard)
+  async getProfile(@Request() req): Promise<GetProfileResponseDto> {
+    // Extract user ID from JWT payload
+    const userId = req.user.sub;
+    return await this.usersService.getProfile(userId);
   }
 
   /**

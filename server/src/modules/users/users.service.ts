@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './users.model';
-import { RegisterDto, LoginDto, UpdateProfileDto, AuthResponseDto, UserResponseDto } from './dto';
+import { RegisterDto, LoginDto, UpdateProfileDto, AuthResponseDto, UserResponseDto, GetProfileResponseDto } from './dto';
 
 /**
  * Service handling user-related operations
@@ -139,6 +139,34 @@ export class UsersService {
     // Format response (exclude sensitive fields)
     const { password_hash, soft_deleted_at, ...userResponse } = updatedUser;
     return userResponse as UserResponseDto;
+  }
+
+  /**
+   * Retrieves a user's profile information
+   * @param userId The ID of the user requesting their profile
+   * @returns The user profile data (excluding sensitive fields)
+   */
+  async getProfile(userId: number): Promise<GetProfileResponseDto> {
+    // Find the user by ID
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Check if user is soft deleted
+    if (user.soft_deleted_at !== null) {
+      throw new UnauthorizedException('This account has been deactivated');
+    }
+
+    // Return only the necessary fields
+    return {
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      date_of_birth: user.date_of_birth,
+      phone: user.phone,
+      existing_conditions: user.existing_conditions
+    };
   }
 
   /**
