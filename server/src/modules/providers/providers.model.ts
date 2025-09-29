@@ -1,9 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from '../users/users.model';
 
 @Entity('providers')
 export class Provider {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: false })
+  user_id: number;
 
   @Column({ length: 200, nullable: false })
   provider_name: string;
@@ -41,6 +45,10 @@ export class Provider {
   updated_at: Date;
 
   // Relationships
+  @ManyToOne(() => User, user => user.providers, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
   @OneToMany('Visit', 'provider')
   visits: any[];
 

@@ -44,4 +44,7 @@ export class User {
 
   @OneToMany('Medication', 'user')
   medications: any[];
+
+  @OneToMany('Provider', 'user')
+  providers: any[];
 }
