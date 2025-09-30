@@ -26,32 +26,34 @@ async function bootstrap() {
     }),
   );
   
-  // Register shutdown hooks for graceful termination
-  app.enableShutdownHooks();
-  
-  // Handle process termination signals
-  const signals = ['SIGTERM', 'SIGINT'];
-  
-  signals.forEach(signal => {
-    process.on(signal, async () => {
-      logger.log(`Received ${signal}, gracefully shutting down...`);
-      
-      try {
-        // Close NestJS app
-        await app.close();
-        logger.log('Server closed successfully');
-        
-        // Exit with success code
-        process.exit(0);
-      } catch (error) {
-        logger.error(`Error during shutdown: ${error}`);
-        process.exit(1);
-      }
-    });
-  });
-  
   // Start the server
   await app.listen(port);
+  
+  // Register shutdown hooks for graceful termination
+  let isShuttingDown = false;
+  
+  const gracefulShutdown = async (signal: string) => {
+    if (isShuttingDown) {
+      return; // Prevent multiple shutdown attempts
+    }
+    isShuttingDown = true;
+    
+    logger.log(`Received ${signal}, gracefully shutting down...`);
+    
+    try {
+      // Close the HTTP server first
+      await app.close();
+      logger.log('Server closed successfully');
+      process.exit(0);
+    } catch (error) {
+      logger.error(`Error during shutdown: ${error}`);
+      process.exit(1);
+    }
+  };
+  
+  // Handle process termination signals
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
   
   // Log application status
   logger.log(`Server is running on Port ${port}`);

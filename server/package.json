@@ -9,6 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"backend-wide-tests/**/*.ts\"",
     "start": "nest start",
+    "prestart:dev": "lsof -ti :5001 | xargs kill -9 2>/dev/null || true",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",

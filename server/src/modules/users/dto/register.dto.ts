@@ -26,7 +26,7 @@ export class RegisterDto {
 
   @IsISO8601({}, { message: 'Please provide a valid date in ISO format (YYYY-MM-DD)' })
   @IsNotEmpty({ message: 'Date of birth is required' })
-  date_of_birth: string; // Will be converted to Date in service
+  date_of_birth: string;
 
   @IsString({ message: 'Phone number must be a string' })
   @IsOptional()

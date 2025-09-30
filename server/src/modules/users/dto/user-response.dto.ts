@@ -7,13 +7,11 @@ export class UserResponseDto {
   email: string;
   first_name: string;
   last_name: string;
-  date_of_birth: Date;
+  date_of_birth: string; // YYYY-MM-DD format
   phone?: string | null;
   existing_conditions?: string | null;
   created_at: Date;
   updated_at: Date;
-  
-  // Explicitly omitting for security: password_hash, soft_deleted_at
 }
 
 /**

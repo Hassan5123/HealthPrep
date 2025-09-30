@@ -27,7 +27,7 @@ describe('ProvidersService Integration Tests', () => {
     password_hash: '',
     first_name: 'Provider',
     last_name: 'TestUser1',
-    date_of_birth: new Date('1990-01-01'),
+    date_of_birth: '1990-01-01',
     phone: '+1234567890',
     existing_conditions: 'Test conditions for provider tests'
   };
@@ -37,7 +37,7 @@ describe('ProvidersService Integration Tests', () => {
     password_hash: '',
     first_name: 'Provider',
     last_name: 'TestUser2',
-    date_of_birth: new Date('1985-01-01'),
+    date_of_birth: '1985-01-01',
     phone: '+1234567891'
   };
 
@@ -235,7 +235,7 @@ describe('ProvidersService Integration Tests', () => {
         password_hash: await bcrypt.hash('password', await bcrypt.genSalt()),
         first_name: 'Empty',
         last_name: 'User',
-        date_of_birth: new Date('1995-01-01')
+        date_of_birth: '1995-01-01'
       };
       
       const existingUser = await userRepository.findOne({ where: { email: newUser.email } });

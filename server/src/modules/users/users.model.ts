@@ -17,8 +17,8 @@ export class User {
   @Column({ length: 100, nullable: false })
   last_name: string;
 
-  @Column({ type: 'date', nullable: false })
-  date_of_birth: Date;
+  @Column({ type: 'varchar', length: 10, nullable: false })
+  date_of_birth: string;
 
   @Column({ length: 20, nullable: true })
   phone: string;

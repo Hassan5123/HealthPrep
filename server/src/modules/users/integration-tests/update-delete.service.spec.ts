@@ -123,7 +123,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     const regularUser = await createTestUser(`update-delete-test-${testRunId}@example.com`, {
       firstName: 'Update',
       lastName: 'Tester',
-      dateOfBirth: new Date('1985-03-15'),
+      dateOfBirth: '1985-03-15',
       phone: '555-123-4567',
       existingConditions: 'None'
     });
@@ -133,7 +133,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     const updateTestUser = await createTestUser(`update-delete-profile-${testRunId}@example.com`, {
       firstName: 'Profile',
       lastName: 'Update',
-      dateOfBirth: new Date('1990-06-20')
+      dateOfBirth: '1990-06-20'
     });
     testUserIds.updateTestUser = updateTestUser.id;
 
@@ -144,7 +144,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     // Actually deactivate this user for the deactivation tests
     await usersService.deactivateAccount(deactivateTestUser.id);
     
-    // User with an email we'll try to conflict with
+    // User with an email to try to conflict with
     const existingEmailUser = await createTestUser(`update-delete-existing-${testRunId}@example.com`);
     testUserIds.existingEmailUser = existingEmailUser.id;
     
@@ -154,14 +154,14 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     });
     testUserIds.alreadyDeactivatedUser = alreadyDeactivatedUser.id;
     
-    // Generate a valid token for our test user
+    // Generate a valid token for the test user
     validToken = jwtService.sign({ 
       sub: regularUser.id, 
       email: regularUser.email 
     });
     
     // Generate an expired token using a JWT that's manually created with past expiry
-    // We need to avoid setting both exp claim AND expiresIn option as they conflict
+    // Need to avoid setting both exp claim AND expiresIn option as they conflict
     const pastDate = new Date();
     pastDate.setHours(pastDate.getHours() - 1); // 1 hour in the past
     
@@ -178,7 +178,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
     softDeleted?: boolean,
     firstName?: string, 
     lastName?: string,
-    dateOfBirth?: Date,
+    dateOfBirth?: string,
     phone?: string,
     existingConditions?: string
   } = {}): Promise<User> {
@@ -186,7 +186,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       softDeleted = false,
       firstName = 'Test',
       lastName = 'User',
-      dateOfBirth = new Date('1990-01-01'),
+      dateOfBirth = '1990-01-01',
       phone = null,
       existingConditions = null
     } = options;
@@ -230,7 +230,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
         last_name: 'Name',
         phone: '999-888-7777',
         existing_conditions: 'Allergies, Asthma',
-        // Note: Not updating email to avoid conflicts
+        // Not updating email to avoid conflicts
       };
 
       // Make the update request with JWT token
@@ -522,7 +522,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       const freshUser = await createTestUser(`update-delete-auth-test-${testRunId}@example.com`);
       testUserIds.regularUser = freshUser.id;
       
-      // Test that we can deactivate directly via the service
+      // Test that can be deactivated directly via the service
       await usersService.deactivateAccount(freshUser.id);
       
       // Verify deactivation worked, regardless of the success flag in the return value
@@ -587,7 +587,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       // Create a fresh user for this test
       const testUser = await createTestUser(`update-delete-concurrent-deactivate-${testRunId}@example.com`);
       
-      // First deactivate the user to ensure we know the state
+      // First deactivate the user to ensure state is known
       await usersService.deactivateAccount(testUser.id);
       
       // Now attempt multiple concurrent deactivations on an already deactivated account
@@ -615,7 +615,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
    */
   describe('Data Persistence Verification', () => {
     it('should show all test users in the database', async () => {
-      // Get all users we've been working with
+      // Get all users I've been working with
       const users = await userRepository.find({
         where: [
           { id: testUserIds.regularUser },
@@ -630,7 +630,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       // Verify users are still there - there should be at least 4
       expect(users.length).toBeGreaterThanOrEqual(4);
       
-      // Optional: Verify specific state of each user
+      // Verify specific state of each user
       const regularUser = users.find(u => u.id === testUserIds.regularUser);
       expect(regularUser).toBeDefined();
       expect(regularUser!.soft_deleted_at).not.toBeNull(); // Should be deactivated from test 4
@@ -639,7 +639,7 @@ describe('UsersService Profile Update & Account Deactivation Tests', () => {
       expect(updateTestUser).toBeDefined();
       expect(updateTestUser!.first_name).toBe('Updated'); // From test 1
       
-      // make sure the email follows pattern since we're using dynamic email generation
+      // make sure the email follows pattern since using dynamic email generation
       expect(updateTestUser!.email).toMatch(/@example.com$/);
     });
   });

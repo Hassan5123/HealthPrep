@@ -1,11 +1,14 @@
-import { Injectable, ConflictException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-
+import { JwtService } from '@nestjs/jwt';
 import { User } from './users.model';
-import { RegisterDto, LoginDto, UpdateProfileDto, AuthResponseDto, UserResponseDto, GetProfileResponseDto } from './dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { UserResponseDto, AuthResponseDto } from './dto/user-response.dto';
+import { GetProfileResponseDto } from './dto/get-profile-response.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 /**
  * Service handling user-related operations
@@ -41,7 +44,7 @@ export class UsersService {
       password_hash,
       first_name: userData.first_name,
       last_name: userData.last_name,
-      date_of_birth: new Date(userData.date_of_birth),
+      date_of_birth: userData.date_of_birth,
       phone: userData.phone,
       existing_conditions: userData.existing_conditions,
       soft_deleted_at: null
@@ -129,7 +132,7 @@ export class UsersService {
     if (updateProfileDto.email) user.email = updateProfileDto.email;
     if (updateProfileDto.first_name) user.first_name = updateProfileDto.first_name;
     if (updateProfileDto.last_name) user.last_name = updateProfileDto.last_name;
-    if (updateProfileDto.date_of_birth) user.date_of_birth = new Date(updateProfileDto.date_of_birth);
+    if (updateProfileDto.date_of_birth) user.date_of_birth = updateProfileDto.date_of_birth;
     if (updateProfileDto.phone !== undefined) user.phone = updateProfileDto.phone;
     if (updateProfileDto.existing_conditions !== undefined) user.existing_conditions = updateProfileDto.existing_conditions;
 

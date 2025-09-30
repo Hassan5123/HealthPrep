@@ -112,13 +112,13 @@ describe('UsersService Integration Tests', () => {
     softDeleted?: boolean,
     firstName?: string, 
     lastName?: string,
-    dateOfBirth?: Date
+    dateOfBirth?: string
   } = {}) {
     const {
       softDeleted = false,
       firstName = 'Test',
       lastName = 'User',
-      dateOfBirth = new Date('1990-01-01')
+      dateOfBirth = '1990-01-01'
     } = options;
 
     const salt = await bcrypt.genSalt();
@@ -285,7 +285,7 @@ describe('UsersService Integration Tests', () => {
       // Arrange
       const loginDto: LoginDto = {
         email: `reg-login-user-${testRunId}@example.com`,
-        password: 'Password123!', // This matches what we set in createTestUser
+        password: 'Password123!', // This matches what i set in createTestUser
       };
 
       // Act

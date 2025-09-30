@@ -48,24 +48,19 @@ export class UsersController {
   /**
    * Endpoint for updating user profile
    * Protected by JWT authentication
-   * @param req Request object containing authenticated user
    * @param updateProfileDto User profile update data
    * @returns Updated user data
    */
   @Put('profile')
   @UseGuards(AuthGuard)
-  async updateProfile(
-    @Request() req,
-    @Body() updateProfileDto: UpdateProfileDto
-  ): Promise<UserResponseDto> {
-    // Extract user ID from JWT payload
+  async updateProfile(@Request() req: any, @Body() updateProfileDto: UpdateProfileDto): Promise<UserResponseDto> {
+    // Extract user ID from JWT payload (stored as 'sub')
     const userId = req.user.sub;
-    return await this.usersService.updateProfile(userId, updateProfileDto);
+    return this.usersService.updateProfile(userId, updateProfileDto);
   }
 
   /**
    * Endpoint for deactivating user account (soft delete)
-   * Protected by JWT authentication
    * @param req Request object containing authenticated user
    * @returns Success message
    */

@@ -30,13 +30,13 @@ export async function apiRequest<T = any>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  const defaultHeaders = {
+  const defaultHeaders: HeadersInit = {
     'Content-Type': 'application/json',
   };
 
   const config: RequestInit = {
-    headers: { ...defaultHeaders, ...options.headers },
     ...options,
+    headers: { ...defaultHeaders, ...options.headers },
   };
 
   try {

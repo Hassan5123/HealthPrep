@@ -29,7 +29,7 @@ export default function Navbar() {
     };
   }, []);
   return (
-    <nav className="bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-200 sticky top-0 z-50">
+    <nav className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Brand */}
@@ -48,7 +48,19 @@ export default function Navbar() {
           {/* Auth Buttons */}
           <div className="flex items-center space-x-4">
             {isLoggedIn ? (
-              <Logout />
+              <>
+                {/* User Profile Icon */}
+                <Link 
+                  href="/user-profile" 
+                  className="flex items-center justify-center w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full transition-all duration-200"
+                  aria-label="User Profile"
+                >
+                  <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </Link>
+                <Logout />
+              </>
             ) : (
               <>
                 <Link href="/login" className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 text-center">
