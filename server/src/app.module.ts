@@ -5,6 +5,7 @@ import * as path from 'path';
 
 import { UsersModule } from './modules/users/users.module';
 import { ProvidersModule } from './modules/providers/providers.module';
+import { SymptomsModule } from './modules/symptoms/symptoms.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ProvidersModule } from './modules/providers/providers.module';
     // Feature modules
     UsersModule,
     ProvidersModule,
+    SymptomsModule,
   ],
   controllers: [],
   providers: [],
