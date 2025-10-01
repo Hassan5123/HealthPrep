@@ -42,10 +42,11 @@ export class Symptom {
 
   @Column({
     type: 'enum',
-    enum: ['active', 'resolved', 'monitoring'],
-    default: 'active'
+    enum: ['active', 'resolved'],
+    default: 'active',
+    nullable: false
   })
-  status: 'active' | 'resolved' | 'monitoring';
+  status: 'active' | 'resolved';
 
   @Column({ type: 'timestamp', nullable: true })
   soft_deleted_at: Date | null;
