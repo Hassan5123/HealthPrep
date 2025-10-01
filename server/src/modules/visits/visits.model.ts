@@ -15,7 +15,7 @@ export class Visit {
   @Column({ type: 'date', nullable: false })
   visit_date: Date;
 
-  @Column({ type: 'time', nullable: false })
+  @Column({ type: 'time', nullable: true })
   visit_time: string;
 
   @Column('text', { nullable: false })
@@ -23,10 +23,11 @@ export class Visit {
 
   @Column({
     type: 'enum',
-    enum: ['scheduled', 'completed', 'cancelled'],
-    default: 'scheduled'
+    enum: ['scheduled', 'completed'],
+    default: 'scheduled',
+    nullable: false,
   })
-  status: 'scheduled' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'completed';
 
   @Column({ type: 'timestamp', nullable: true })
   soft_deleted_at: Date | null;
