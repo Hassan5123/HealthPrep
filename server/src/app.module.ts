@@ -6,6 +6,7 @@ import * as path from 'path';
 import { UsersModule } from './modules/users/users.module';
 import { ProvidersModule } from './modules/providers/providers.module';
 import { SymptomsModule } from './modules/symptoms/symptoms.module';
+import { VisitsModule } from './modules/visits/visits.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { SymptomsModule } from './modules/symptoms/symptoms.module';
     UsersModule,
     ProvidersModule,
     SymptomsModule,
+    VisitsModule,
   ],
   controllers: [],
   providers: [],
