@@ -219,7 +219,7 @@ describe('SymptomsService Integration Tests', () => {
       });
       
       if (dbSymptom) {
-        await service.updateSymptom(dbSymptom.id, testUser1Id, { delete: true });
+        await service.deleteSymptom(dbSymptom.id, testUser1Id);
         const symptomsAfterDelete = await service.getAllSymptoms(testUser1Id);
         expect(symptomsAfterDelete.find(s => s.symptom_name === addDto.symptom_name)).toBeUndefined();
       }
@@ -359,29 +359,6 @@ describe('SymptomsService Integration Tests', () => {
       }
     });
 
-    it('should successfully soft delete symptom', async () => {
-      const addDto: AddSymptomDto = {
-        symptom_name: `Symptoms Test Delete ${Date.now()}`,
-        severity: 6,
-        onset_date: '2025-09-17',
-        status: 'active'
-      };
-      await service.addSymptom(testUser1Id, addDto);
-      
-      const dbSymptom = await symptomRepository.findOne({
-        where: { user_id: testUser1Id, symptom_name: addDto.symptom_name, soft_deleted_at: IsNull() }
-      });
-      
-      if (dbSymptom) {
-        const result = await service.updateSymptom(dbSymptom.id, testUser1Id, { delete: true });
-        expect(result.success).toBe(true);
-        expect(result.message).toBe('Symptom deleted successfully');
-        
-        await expect(service.getSymptomById(dbSymptom.id, testUser1Id))
-          .rejects.toThrow('Symptom not found');
-      }
-    });
-
     it('should throw NotFoundException for non-existent symptom', async () => {
       await expect(service.updateSymptom(99999999, testUser1Id, { severity: 5 }))
         .rejects.toThrow('Symptom not found or you do not have access to it');
@@ -402,6 +379,55 @@ describe('SymptomsService Integration Tests', () => {
       
       if (dbSymptom) {
         await expect(service.updateSymptom(dbSymptom.id, testUser2Id, { severity: 8 }))
+          .rejects.toThrow('Symptom not found or you do not have access to it');
+      }
+    });
+  });
+
+  describe('deleteSymptom', () => {
+    it('should successfully soft delete symptom', async () => {
+      const addDto: AddSymptomDto = {
+        symptom_name: `Symptoms Test Delete ${Date.now()}`,
+        severity: 6,
+        onset_date: '2025-09-17',
+        status: 'active'
+      };
+      await service.addSymptom(testUser1Id, addDto);
+      
+      const dbSymptom = await symptomRepository.findOne({
+        where: { user_id: testUser1Id, symptom_name: addDto.symptom_name, soft_deleted_at: IsNull() }
+      });
+      
+      if (dbSymptom) {
+        const result = await service.deleteSymptom(dbSymptom.id, testUser1Id);
+        expect(result.success).toBe(true);
+        expect(result.message).toBe('Symptom deleted successfully');
+        
+        await expect(service.getSymptomById(dbSymptom.id, testUser1Id))
+          .rejects.toThrow('Symptom not found');
+      }
+    });
+
+    it('should throw NotFoundException for non-existent symptom', async () => {
+      await expect(service.deleteSymptom(99999999, testUser1Id))
+        .rejects.toThrow('Symptom not found or you do not have access to it');
+    });
+
+    it('should throw NotFoundException when deleting another user symptom', async () => {
+      const addDto: AddSymptomDto = {
+        symptom_name: `Symptoms Test Delete Unauthorized ${Date.now()}`,
+        severity: 5,
+        onset_date: '2025-09-25',
+        status: 'active'
+      };
+      await service.addSymptom(testUser1Id, addDto);
+      
+      const dbSymptom = await symptomRepository.findOne({
+        where: { user_id: testUser1Id, symptom_name: addDto.symptom_name, soft_deleted_at: IsNull() }
+      });
+      
+      if (dbSymptom) {
+        await expect(service.deleteSymptom(dbSymptom.id, testUser2Id))
           .rejects.toThrow('Symptom not found or you do not have access to it');
       }
     });

@@ -1,8 +1,8 @@
-import { IsString, IsInt, Min, Max, IsISO8601, IsOptional, MaxLength, IsEnum, IsBoolean } from 'class-validator';
+import { IsString, IsInt, Min, Max, IsISO8601, IsOptional, MaxLength, IsEnum } from 'class-validator';
 
 /**
  * Data Transfer Object for updating an existing symptom
- * All fields are optional since users can update specific fields or soft delete
+ * All fields are optional since users can update specific fields
  */
 export class UpdateSymptomDto {
   @IsString({ message: 'Symptom name must be a string' })
@@ -52,8 +52,4 @@ export class UpdateSymptomDto {
   @IsEnum(['active', 'resolved'], { message: 'Status must be either active or resolved' })
   @IsOptional()
   status?: 'active' | 'resolved';
-
-  @IsBoolean({ message: 'Delete flag must be a boolean' })
-  @IsOptional()
-  delete?: boolean;
 }

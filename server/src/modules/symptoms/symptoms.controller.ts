@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, UseGuards, Request, HttpCode, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request, HttpCode, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { AuthGuard } from '../../common/middlewares/auth-middleware';
 import { SymptomsService } from './symptoms.service';
 import { AddSymptomDto, UpdateSymptomDto, SymptomListResponseDto, SymptomDetailResponseDto } from './dto';
@@ -90,7 +90,7 @@ export class SymptomsController {
 
   /**
    * Endpoint to update an existing symptom
-   * Can update symptom fields or soft delete the symptom
+   * Updates symptom fields
    * Ensures the symptom belongs to the authenticated user
    * @param req Request object containing authenticated user
    * @param symptomId ID of the symptom to update
@@ -106,5 +106,23 @@ export class SymptomsController {
   ): Promise<{ success: boolean; message: string }> {
     const userId = req.user.sub;
     return await this.symptomsService.updateSymptom(symptomId, userId, updateSymptomDto);
+  }
+
+
+  /**
+   * Endpoint to delete (soft delete) a symptom
+   * Ensures the symptom belongs to the authenticated user
+   * @param req Request object containing authenticated user
+   * @param symptomId ID of the symptom to delete
+   * @returns Success message
+   */
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async deleteSymptom(
+    @Request() req,
+    @Param('id', ParseIntPipe) symptomId: number,
+  ): Promise<{ success: boolean; message: string }> {
+    const userId = req.user.sub;
+    return await this.symptomsService.deleteSymptom(symptomId, userId);
   }
 }

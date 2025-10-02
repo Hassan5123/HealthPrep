@@ -208,16 +208,6 @@ export class SymptomsService {
       throw new NotFoundException('Symptom not found or you do not have access to it');
     }
 
-    // Check if user wants to soft delete the symptom
-    if (updateSymptomDto.delete === true) {
-      symptom.soft_deleted_at = new Date();
-      await this.symptomsRepository.save(symptom);
-      return {
-        success: true,
-        message: 'Symptom deleted successfully',
-      };
-    }
-
     // Update fields if provided
     if (updateSymptomDto.symptom_name !== undefined) {
       symptom.symptom_name = updateSymptomDto.symptom_name;
@@ -262,6 +252,35 @@ export class SymptomsService {
     };
   }
 
+
+  /**
+   * Soft delete a symptom
+   * @param symptomId ID of the symptom to delete
+   * @param userId ID of the authenticated user
+   * @returns Success message
+   */
+  async deleteSymptom(symptomId: number, userId: number): Promise<{ success: boolean; message: string }> {
+    const symptom = await this.symptomsRepository.findOne({
+      where: {
+        id: symptomId,
+        user_id: userId,
+        soft_deleted_at: IsNull(),
+      },
+    });
+
+    if (!symptom) {
+      throw new NotFoundException('Symptom not found or you do not have access to it');
+    }
+
+    // Soft delete by setting soft_deleted_at timestamp
+    symptom.soft_deleted_at = new Date();
+    await this.symptomsRepository.save(symptom);
+
+    return {
+      success: true,
+      message: 'Symptom deleted successfully',
+    };
+  }
 
 
   /**
