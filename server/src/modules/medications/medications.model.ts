@@ -12,9 +12,6 @@ export class Medication {
   @Column({ nullable: true })
   prescribing_provider_id: number;
 
-  @Column({ nullable: true })
-  prescribed_during_visit_id: number;
-
   @Column({ length: 200, nullable: false })
   medication_name: string;
 
@@ -36,7 +33,8 @@ export class Medication {
   @Column({
     type: 'enum',
     enum: ['taking', 'discontinued'],
-    default: 'taking'
+    default: 'taking',
+    nullable: false
   })
   status: 'taking' | 'discontinued';
 
@@ -56,8 +54,4 @@ export class Medication {
   @ManyToOne('Provider', 'medications', { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'prescribing_provider_id' })
   prescribing_provider: any;
-
-  @ManyToOne('Visit', 'medications', { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'prescribed_during_visit_id' })
-  prescribed_during_visit: any;
 }
