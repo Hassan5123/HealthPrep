@@ -8,6 +8,7 @@ import { ProvidersModule } from './modules/providers/providers.module';
 import { SymptomsModule } from './modules/symptoms/symptoms.module';
 import { VisitsModule } from './modules/visits/visits.module';
 import { VisitPrepModule } from './modules/visit-prep/visit-prep.module';
+import { VisitSummariesModule } from './modules/visit-summaries/visit-summaries.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { VisitPrepModule } from './modules/visit-prep/visit-prep.module';
     SymptomsModule,
     VisitsModule,
     VisitPrepModule,
+    VisitSummariesModule,
   ],
   controllers: [],
   providers: [],
