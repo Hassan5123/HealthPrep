@@ -217,6 +217,26 @@ describe('VisitPrepService Integration Tests', () => {
       await expect(service.createVisitPrep(testUser1Id, createDto))
         .rejects.toThrow('Visit preparation already exists for this visit');
     });
+
+    it('should throw BadRequestException when trying to create prep for completed visit', async () => {
+      // Create a completed visit
+      const completedVisit = await visitRepository.save({
+        user_id: testUser1Id,
+        provider_id: testProvider1Id,
+        visit_date: '2024-01-15',
+        visit_time: '14:00:00',
+        visit_reason: `Completed Visit Test ${Date.now()}`,
+        status: 'completed'
+      } as any);
+
+      const createDto: CreateVisitPrepDto = {
+        visit_id: completedVisit.id,
+        prep_summary_notes: 'Trying to prep a completed visit'
+      };
+
+      await expect(service.createVisitPrep(testUser1Id, createDto))
+        .rejects.toThrow('Cannot create visit preparation for a completed visit');
+    });
   });
 
   describe('getVisitPrepByVisitId', () => {
@@ -461,6 +481,43 @@ describe('VisitPrepService Integration Tests', () => {
 
       await expect(service.updateVisitPrep(uniqueVisit.id, testUser2Id, updateDto))
         .rejects.toThrow('Visit not found or you do not have access to it');
+    });
+
+    it('should throw BadRequestException when trying to update prep for completed visit', async () => {
+      // Create a completed visit with existing prep
+      const completedVisit = await visitRepository.save({
+        user_id: testUser1Id,
+        provider_id: testProvider1Id,
+        visit_date: '2024-01-20',
+        visit_time: '10:00:00',
+        visit_reason: `Completed Visit Update Test ${Date.now()}`,
+        status: 'completed'
+      } as any);
+      
+      const scheduledVisit = await visitRepository.save({
+        user_id: testUser1Id,
+        provider_id: testProvider1Id,
+        visit_date: '2024-01-21',
+        visit_time: '11:00:00',
+        visit_reason: `Status Change Test ${Date.now()}`,
+        status: 'scheduled'
+      } as any);
+
+      await service.createVisitPrep(testUser1Id, {
+        visit_id: scheduledVisit.id,
+        prep_summary_notes: 'Initial prep'
+      });
+
+      // Now mark the visit as completed
+      scheduledVisit.status = 'completed';
+      await visitRepository.save(scheduledVisit);
+
+      const updateDto: UpdateVisitPrepDto = {
+        prep_summary_notes: 'Trying to update after completion'
+      };
+
+      await expect(service.updateVisitPrep(scheduledVisit.id, testUser1Id, updateDto))
+        .rejects.toThrow('Cannot update visit preparation for a completed visit');
     });
   });
 

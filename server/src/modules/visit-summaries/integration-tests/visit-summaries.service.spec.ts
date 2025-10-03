@@ -217,6 +217,26 @@ describe('VisitSummariesService Integration Tests', () => {
       await expect(service.createVisitSummary(testUser1Id, createDto))
         .rejects.toThrow('Visit summary already exists for this visit');
     });
+
+    it('should throw BadRequestException when trying to create summary for scheduled visit', async () => {
+      // Create a scheduled visit
+      const scheduledVisit = await visitRepository.save({
+        user_id: testUser1Id,
+        provider_id: testProvider1Id,
+        visit_date: '2025-06-15',
+        visit_time: '14:00:00',
+        visit_reason: `Scheduled Visit Test ${Date.now()}`,
+        status: 'scheduled'
+      } as any);
+
+      const createDto: CreateVisitSummaryDto = {
+        visit_id: scheduledVisit.id,
+        visit_summary_notes: 'Trying to summarize a scheduled visit'
+      };
+
+      await expect(service.createVisitSummary(testUser1Id, createDto))
+        .rejects.toThrow('Cannot create visit summary for a scheduled visit. Visit must be completed first.');
+    });
   });
 
   describe('getVisitSummaryByVisitId', () => {
@@ -435,6 +455,48 @@ describe('VisitSummariesService Integration Tests', () => {
 
       await expect(service.updateVisitSummary(uniqueVisit.id, testUser2Id, updateDto))
         .rejects.toThrow('Visit not found or you do not have access to it');
+    });
+
+    it('should throw BadRequestException when trying to update summary for scheduled visit', async () => {
+      // Create a completed visit with existing summary
+      const completedVisit = await visitRepository.save({
+        user_id: testUser1Id,
+        provider_id: testProvider1Id,
+        visit_date: '2024-01-20',
+        visit_time: '10:00:00',
+        visit_reason: `Completed Visit Summary ${Date.now()}`,
+        status: 'completed'
+      } as any);
+
+      await service.createVisitSummary(testUser1Id, {
+        visit_id: completedVisit.id,
+        visit_summary_notes: 'Initial summary'
+      });
+
+      const scheduledVisit = await visitRepository.save({
+        user_id: testUser1Id,
+        provider_id: testProvider1Id,
+        visit_date: '2024-01-21',
+        visit_time: '11:00:00',
+        visit_reason: `Status Change Summary Test ${Date.now()}`,
+        status: 'completed'
+      } as any);
+
+      await service.createVisitSummary(testUser1Id, {
+        visit_id: scheduledVisit.id,
+        visit_summary_notes: 'Initial summary'
+      });
+
+      // Now change the visit status to scheduled (simulating an edge case)
+      scheduledVisit.status = 'scheduled';
+      await visitRepository.save(scheduledVisit);
+
+      const updateDto: UpdateVisitSummaryDto = {
+        visit_summary_notes: 'Trying to update for scheduled visit'
+      };
+
+      await expect(service.updateVisitSummary(scheduledVisit.id, testUser1Id, updateDto))
+        .rejects.toThrow('Cannot update visit summary for a scheduled visit. Visit must be completed first.');
     });
   });
 

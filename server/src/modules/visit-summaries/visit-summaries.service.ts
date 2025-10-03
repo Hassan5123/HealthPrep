@@ -100,6 +100,11 @@ export class VisitSummariesService {
       throw new NotFoundException('Visit not found or you do not have access to it');
     }
 
+    // Visit summary can only be created for completed visits (not scheduled)
+    if (visit.status === 'scheduled') {
+      throw new BadRequestException('Cannot create visit summary for a scheduled visit. Visit must be completed first.');
+    }
+
     // Check if visit summary already exists for this visit
     const existingSummary = await this.visitSummaryRepository.findOne({
       where: {
@@ -151,6 +156,11 @@ export class VisitSummariesService {
 
     if (!visit) {
       throw new NotFoundException('Visit not found or you do not have access to it');
+    }
+
+    // Visit summary can only be updated for completed visits (not scheduled)
+    if (visit.status === 'scheduled') {
+      throw new BadRequestException('Cannot update visit summary for a scheduled visit. Visit must be completed first.');
     }
 
     // Get the visit summary record

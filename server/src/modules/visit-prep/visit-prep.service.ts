@@ -126,6 +126,11 @@ export class VisitPrepService {
       throw new NotFoundException('Visit not found or you do not have access to it');
     }
 
+    // Visit prep can only be created for scheduled visits (not completed)
+    if (visit.status === 'completed') {
+      throw new BadRequestException('Cannot create visit preparation for a completed visit');
+    }
+
     // Check if visit prep already exists for this visit
     const existingPrep = await this.visitPrepRepository.findOne({
       where: {
@@ -182,6 +187,11 @@ export class VisitPrepService {
 
     if (!visit) {
       throw new NotFoundException('Visit not found or you do not have access to it');
+    }
+
+    // Visit prep can only be updated for scheduled visits (not completed)
+    if (visit.status === 'completed') {
+      throw new BadRequestException('Cannot update visit preparation for a completed visit');
     }
 
     // Get the visit prep record
