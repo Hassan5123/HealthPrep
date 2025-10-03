@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import { Symptom } from './symptoms.model';
 import { AddSymptomDto, UpdateSymptomDto, SymptomListResponseDto, SymptomDetailResponseDto } from './dto';
+import { formatDate } from '../../common/utils/format-date.util';
 
 
 /**
@@ -37,8 +38,8 @@ export class SymptomsService {
     return symptoms.map(symptom => ({
       symptom_name: symptom.symptom_name,
       severity: symptom.severity,
-      onset_date: this.formatDate(symptom.onset_date),
-      end_date: symptom.end_date ? this.formatDate(symptom.end_date) : null,
+      onset_date: formatDate(symptom.onset_date)!,
+      end_date: formatDate(symptom.end_date),
       location_on_body: symptom.location_on_body || null,
       status: symptom.status,
     }));
@@ -66,8 +67,8 @@ export class SymptomsService {
     return symptoms.map(symptom => ({
       symptom_name: symptom.symptom_name,
       severity: symptom.severity,
-      onset_date: this.formatDate(symptom.onset_date),
-      end_date: symptom.end_date ? this.formatDate(symptom.end_date) : null,
+      onset_date: formatDate(symptom.onset_date)!,
+      end_date: formatDate(symptom.end_date),
       location_on_body: symptom.location_on_body || null,
     }));
   }
@@ -94,8 +95,8 @@ export class SymptomsService {
     return symptoms.map(symptom => ({
       symptom_name: symptom.symptom_name,
       severity: symptom.severity,
-      onset_date: this.formatDate(symptom.onset_date),
-      end_date: symptom.end_date ? this.formatDate(symptom.end_date) : null,
+      onset_date: formatDate(symptom.onset_date)!,
+      end_date: formatDate(symptom.end_date),
       location_on_body: symptom.location_on_body || null,
     }));
   }
@@ -137,9 +138,9 @@ export class SymptomsService {
     return {
       symptom_name: symptom.symptom_name,
       severity: symptom.severity,
-      onset_date: this.formatDate(symptom.onset_date),
+      onset_date: formatDate(symptom.onset_date)!,
       description: symptom.description || null,
-      end_date: symptom.end_date ? this.formatDate(symptom.end_date) : null,
+      end_date: formatDate(symptom.end_date),
       location_on_body: symptom.location_on_body || null,
       triggers: symptom.triggers || null,
       related_condition: symptom.related_condition || null,
@@ -280,19 +281,5 @@ export class SymptomsService {
       success: true,
       message: 'Symptom deleted successfully',
     };
-  }
-
-
-  /**
-   * Helper method to format dates to YYYY-MM-DD string
-   * @param date Date object
-   * @returns Formatted date string
-   */
-  private formatDate(date: Date): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 }

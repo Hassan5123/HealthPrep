@@ -4,6 +4,7 @@ import { Repository, IsNull } from 'typeorm';
 import { Visit } from './visits.model';
 import { Provider } from '../providers/providers.model';
 import { ScheduleVisitDto, UpdateVisitDto, VisitListResponseDto, VisitScheduledListResponseDto, VisitDetailResponseDto } from './dto';
+import { formatDate } from '../../common/utils/format-date.util';
 
 
 /**
@@ -56,7 +57,7 @@ export class VisitsService {
           provider_name: provider.provider_name,
           provider_type: provider.provider_type,
           specialty: provider.specialty || null,
-          visit_date: this.formatDate(visit.visit_date),
+          visit_date: formatDate(visit.visit_date)!,
           visit_time: visit.visit_time || null,
           status: visit.status,
         };
@@ -105,7 +106,7 @@ export class VisitsService {
           provider_name: provider.provider_name,
           provider_type: provider.provider_type,
           specialty: provider.specialty || null,
-          visit_date: this.formatDate(visit.visit_date),
+          visit_date: formatDate(visit.visit_date)!,
           visit_time: visit.visit_time || null,
         };
       })
@@ -153,7 +154,7 @@ export class VisitsService {
           provider_name: provider.provider_name,
           provider_type: provider.provider_type,
           specialty: provider.specialty || null,
-          visit_date: this.formatDate(visit.visit_date),
+          visit_date: formatDate(visit.visit_date)!,
           visit_time: visit.visit_time || null,
         };
       })
@@ -202,7 +203,7 @@ export class VisitsService {
       specialty: provider.specialty || null,
       phone: provider.phone,
       office_address: provider.office_address || null,
-      visit_date: this.formatDate(visit.visit_date),
+      visit_date: formatDate(visit.visit_date)!,
       visit_time: visit.visit_time || null,
       visit_reason: visit.visit_reason,
       status: visit.status,
@@ -328,21 +329,5 @@ export class VisitsService {
       success: true,
       message: 'Visit removed successfully',
     };
-  }
-
-
-
-  /**
-   * Helper method to format dates to YYYY-MM-DD string
-   * Uses UTC to avoid timezone offset issues with DATE fields from MySQL
-   * @param date Date object
-   * @returns Formatted date string
-   */
-  private formatDate(date: Date): string {
-    const d = new Date(date);
-    const year = d.getUTCFullYear();
-    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(d.getUTCDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 }

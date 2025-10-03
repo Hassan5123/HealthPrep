@@ -4,6 +4,7 @@ import { Repository, IsNull } from 'typeorm';
 import { Medication } from './medications.model';
 import { Provider } from '../providers/providers.model';
 import { AddMedicationDto, UpdateMedicationDto, MedicationListResponseDto, MedicationDetailResponseDto } from './dto';
+import { formatDate } from '../../common/utils/format-date.util';
 
 
 /**
@@ -17,16 +18,6 @@ export class MedicationsService {
     @InjectRepository(Provider)
     private providersRepository: Repository<Provider>,
   ) {}
-
-
-  /**
-   * Helper method to format dates from Date objects to YYYY-MM-DD strings
-   */
-  private formatDate(date: Date | string): string | null {
-    if (!date) return null;
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toISOString().split('T')[0];
-  }
 
 
   /**
@@ -159,7 +150,7 @@ export class MedicationsService {
 
     // Add prescribed_date if not null
     if (medication.prescribed_date) {
-      const formattedDate = this.formatDate(medication.prescribed_date);
+      const formattedDate = formatDate(medication.prescribed_date);
       if (formattedDate) {
         response.prescribed_date = formattedDate;
       }
