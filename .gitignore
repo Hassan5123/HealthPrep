@@ -66,3 +66,4 @@ pnpm-lock.yaml
 .serverless/
 .eslintcache
 commands.md
+ai-prompt.md

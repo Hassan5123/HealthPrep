@@ -10,6 +10,7 @@ import { VisitsModule } from './modules/visits/visits.module';
 import { VisitPrepModule } from './modules/visit-prep/visit-prep.module';
 import { VisitSummariesModule } from './modules/visit-summaries/visit-summaries.module';
 import { MedicationsModule } from './modules/medications/medications.module';
+import { AnthropicModule } from './modules/anthropic/anthropic.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { MedicationsModule } from './modules/medications/medications.module';
     VisitPrepModule,
     VisitSummariesModule,
     MedicationsModule,
+    AnthropicModule
   ],
   controllers: [],
   providers: [],
